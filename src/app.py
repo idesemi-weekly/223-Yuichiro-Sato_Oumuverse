@@ -11,10 +11,18 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import pytz
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+if os.environ.get("SECRET_KEY"):
+    print("SECRET_KEY=OK")
+else:
+    print("SECRET_KEY=NG")
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mypost.db'
-app.config['SECRET_KEY'] = os.urandom(24)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY',os.urandom(24))
 db = SQLAlchemy(app)
 
 login_manager = LoginManager()
