@@ -1,13 +1,32 @@
+#環境変数設定と起動コマンド
+#export FLASK_APP=app.py
+#flask run --debug
+
 from flask import Flask
 from flask import render_template , request ,redirect
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import login_user,logout_user,login_required,LoginManager,UserMixin
 
+from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import pytz
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+if os.environ.get("SECRET_KEY"):
+    print("SECRET_KEY=OK")
+else:
+    print("SECRET_KEY=NG")
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mypost.db'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY',os.urandom(24))
 db = SQLAlchemy(app)
+
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 class Post(db.Model):
     id = db.Column(db.Integer,primary_key=True)
@@ -15,9 +34,18 @@ class Post(db.Model):
     body = db.Column(db.String(3000),nullable=False)
     updated_at = db.Column(db.DateTime,nullable=False,default=datetime.now(pytz.timezone('Asia/Tokyo')))
 
+class User(UserMixin,db.Model):
+    id = db.Column(db.Integer,primary_key=True)
+    username = db.Column(db.String(30),unique=True)
+    password = db.Column(db.String(128))
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+    
 
 @app.route("/index",methods=['GET','POST'])
-#@login_required
+@login_required
 def index():
     if request.method == 'GET':
         posts = Post.query.all()
@@ -35,7 +63,7 @@ def everyonepost():
 
 
 @app.route("/toppage",methods=['GET','POST'])
-#@login_required
+@login_required
 def toppage():
     if request.method == "POST":
         title = request.form.get('title')
@@ -50,7 +78,7 @@ def toppage():
         return render_template("toppage.html")
 
 @app.route("/<int:id>/edit",methods=['GET','POST'])
-#@login_required
+@login_required
 def edit(id):
     post = Post.query.get(id)
     if request.method == "GET":
@@ -64,7 +92,7 @@ def edit(id):
         return redirect('/index')
 
 @app.route("/<int:id>/delete",methods=['GET'])
-#@login_required
+@login_required
 def delete(id):
     post = Post.query.get(id)
 
@@ -74,14 +102,46 @@ def delete(id):
 
 
 @app.route("/admin")
-#@login_required
+@login_required
 def admin():
     return render_template("admin.html")
 
-@app.route("/signup")
+@app.route("/signup",methods=['GET','POST'])
 def signup():
-    return render_template("signup.html")
+    if request.method == "POST":
+        username = request.form.get('username')
+        password =request.form.get('password')
 
-@app.route("/login")
+        existing_user = User.query.filter_by(username=username).first()
+
+        if existing_user:
+            return render_template('signup.html',error="このUsernameは既に使用されています")
+
+        user = User(username=username,password=generate_password_hash(password,method='pbkdf2:sha256'))
+
+        db.session.add(user)
+        db.session.commit()
+        return redirect('/login')
+    else:
+        return render_template('signup.html')
+
+@app.route("/login",methods=['GET','POST'])
 def login():
-    return render_template("login.html")
+    if request.method == "POST":
+        username = request.form.get('username')
+        password =request.form.get('password')
+
+        user = User.query.filter_by(username=username).first()
+        if user and check_password_hash(user.password,password):
+            login_user(user)
+            return redirect('/index')
+        else:
+            return render_template('login.html',error='UsernameまたはPasswordが正しくありません。')
+    else:
+        return render_template('login.html')
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect('/login')
