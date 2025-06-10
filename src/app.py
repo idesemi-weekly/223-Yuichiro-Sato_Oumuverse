@@ -22,7 +22,9 @@ else:
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mypost.db'
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY',os.urandom(24))
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+if not app.config['SECRET_KEY']:
+    print('警告: SECRET_KEYが設定されていません。安全なキーを環境変数に設定してください。')
 db = SQLAlchemy(app)
 
 login_manager = LoginManager()
