@@ -117,6 +117,12 @@ def signup():
         if existing_user:
             return render_template('signup.html',error="このUsernameは既に使用されています")
 
+        if not username or not password:
+            return render_template('signup.html',error="UsernameとPasswordは必須です")
+
+        if len(password) < 8:
+            return render_template('signup.html',error="Passwordは8文字以上必要です")
+
         user = User(username=username,password=generate_password_hash(password,method='pbkdf2:sha256'))
 
         db.session.add(user)
