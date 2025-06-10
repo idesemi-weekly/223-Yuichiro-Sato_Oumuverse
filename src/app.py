@@ -112,6 +112,11 @@ def signup():
         username = request.form.get('username')
         password =request.form.get('password')
 
+        existing_user = User.query.filter_by(username=username).first()
+
+        if existing_user:
+            return render_template('signup.html',error="このUsernameは既に使用されています")
+
         user = User(username=username,password=generate_password_hash(password,method='pbkdf2:sha256'))
 
         db.session.add(user)
