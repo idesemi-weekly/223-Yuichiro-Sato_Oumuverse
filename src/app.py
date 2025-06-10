@@ -119,9 +119,11 @@ def login():
         password =request.form.get('password')
 
         user = User.query.filter_by(username=username).first()
-        if check_password_hash(user.password,password):
+        if user and check_password_hash(user.password,password):
             login_user(user)
             return redirect('/index')
+        else:
+            return render_template('login.html',error='UsernameまたはPasswordが正しくありません。')
     else:
         return render_template('login.html')
 
