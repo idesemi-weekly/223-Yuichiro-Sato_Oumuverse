@@ -1,6 +1,14 @@
 {% extends "base.html"%}
 {% block content %}
 
-<h1>every one post</h1>
+<h1>Everyone Post</h1>
+<a href="/mypost" role="button">My post</a>
+{% for post in posts %}
+<article>
+    <h3>{{ post.title }}</h3>
+    <p>DayTime:{{ post.updated_at.strftime('%Y-%m-%d %H:%M') }} User:{{ post.author.username }}</p>
+    <p>{{ post.body }}</p>
+</article>  
+{% endfor%}
     
 {% endblock %}

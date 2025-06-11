@@ -5,7 +5,7 @@
 from flask import Flask
 from flask import render_template , request ,redirect
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import login_user,logout_user,login_required,LoginManager,UserMixin
+from flask_login import login_user,logout_user,login_required,LoginManager,UserMixin,current_user
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
@@ -34,55 +34,67 @@ class Post(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     title = db.Column(db.String(50),nullable=False)
     body = db.Column(db.String(3000),nullable=False)
-    updated_at = db.Column(db.DateTime,nullable=False,default=datetime.now(pytz.timezone('Asia/Tokyo')))
+    updated_at = db.Column(db.DateTime,nullable=False,default=lambda:datetime.now(pytz.timezone('Asia/Tokyo')))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    author  = db.relationship("User", back_populates="posts")
 
 class User(UserMixin,db.Model):
     id = db.Column(db.Integer,primary_key=True)
     username = db.Column(db.String(30),unique=True)
     password = db.Column(db.String(128))
+    posts = db.relationship("Post",back_populates="author",cascade="all, delete-orphan",lazy="dynamic")
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
     
 
-@app.route("/index",methods=['GET','POST'])
+@app.route("/mypost",methods=['GET','POST'])
 @login_required
-def index():
+def mypost():
+    if request.method == 'GET':
+        posts = Post.query.filter_by(user_id=current_user.id).all()
+        return render_template("mypost.html",posts=posts)
+
+@app.route("/everyonepost",methods=['GET','POST'])
+@login_required
+def everyonepost():
     if request.method == 'GET':
         posts = Post.query.all()
-        return render_template("index.html",posts=posts)
-
-@app.route("/mypost")
-#@login_required
-def mypost():
-    return render_template("mypost.html")
-
-@app.route("/everyonepost")
-#@login_required
-def everyonepost():
-    return render_template("everyonepost.html")
+        return render_template("everyonepost.html",posts=posts)
 
 
-@app.route("/toppage",methods=['GET','POST'])
+@app.route("/")
+def top():
+    return render_template("top.html")
+
+
+@app.route("/newpost",methods=['GET','POST'])
 @login_required
-def toppage():
+def newpost():
     if request.method == "POST":
         title = request.form.get('title')
         body = request.form.get('body')
 
-        post = Post(title=title,body=body)
+        post = Post(title=title,body=body,user_id=current_user.id)
 
         db.session.add(post)
         db.session.commit()
-        return redirect('/index')
+        return redirect('/mypost')
     else:
-        return render_template("toppage.html")
+        return render_template("newpost.html")
 
 @app.route("/<int:id>/edit",methods=['GET','POST'])
 @login_required
 def edit(id):
     post = Post.query.get(id)
+
+    if post is None:
+        return redirect('/mypost')
+
+    if post.user_id != current_user.id:
+        return redirect('/mypost')
+
     if request.method == "GET":
         return render_template('edit.html',post=post)
 
@@ -91,16 +103,22 @@ def edit(id):
         post.body =request.form.get('body')
 
         db.session.commit()
-        return redirect('/index')
+        return redirect('/mypost')
 
 @app.route("/<int:id>/delete",methods=['GET'])
 @login_required
 def delete(id):
     post = Post.query.get(id)
 
+    if post is None:
+        return redirect('/mypost')
+
+    if post.user_id != current_user.id:
+        return redirect('/mypost')
+
     db.session.delete(post)
     db.session.commit()
-    return redirect('/index')
+    return redirect('/mypost')
 
 
 @app.route("/admin")
@@ -142,7 +160,7 @@ def login():
         user = User.query.filter_by(username=username).first()
         if user and check_password_hash(user.password,password):
             login_user(user)
-            return redirect('/index')
+            return redirect('/mypost')
         else:
             return render_template('login.html',error='UsernameまたはPasswordが正しくありません。')
     else:
