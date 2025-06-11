@@ -64,9 +64,9 @@ def everyonepost():
     return render_template("everyonepost.html")
 
 
-@app.route("/toppage",methods=['GET','POST'])
+@app.route("/newpost",methods=['GET','POST'])
 @login_required
-def toppage():
+def newpost():
     if request.method == "POST":
         title = request.form.get('title')
         body = request.form.get('body')
@@ -77,7 +77,7 @@ def toppage():
         db.session.commit()
         return redirect('/index')
     else:
-        return render_template("toppage.html")
+        return render_template("newpost.html")
 
 @app.route("/<int:id>/edit",methods=['GET','POST'])
 @login_required
