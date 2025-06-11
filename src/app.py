@@ -52,17 +52,11 @@ def mypost():
     if request.method == 'GET':
         posts = Post.query.all()
         return render_template("mypost.html",posts=posts)
-"""
-@app.route("/mypost")
-#@login_required
-def mypost():
-    return render_template("mypost.html")
-"""
 
-@app.route("/everyonepost")
-#@login_required
-def everyonepost():
-    return render_template("everyonepost.html")
+
+@app.route("/")
+def top():
+    return render_template("top.html")
 
 
 @app.route("/newpost",methods=['GET','POST'])
