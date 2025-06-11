@@ -5,7 +5,7 @@
 from flask import Flask
 from flask import render_template , request ,redirect
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import login_user,logout_user,login_required,LoginManager,UserMixin
+from flask_login import login_user,logout_user,login_required,LoginManager,UserMixin,current_user
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
@@ -35,11 +35,14 @@ class Post(db.Model):
     title = db.Column(db.String(50),nullable=False)
     body = db.Column(db.String(3000),nullable=False)
     updated_at = db.Column(db.DateTime,nullable=False,default=lambda:datetime.now(pytz.timezone('Asia/Tokyo')))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    author  = db.relationship("User", back_populates="posts")
 
 class User(UserMixin,db.Model):
     id = db.Column(db.Integer,primary_key=True)
     username = db.Column(db.String(30),unique=True)
     password = db.Column(db.String(128))
+    posts = db.relationship("Post",back_populates="author",cascade="all, delete-orphan",lazy="dynamic")
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -50,8 +53,15 @@ def load_user(user_id):
 @login_required
 def mypost():
     if request.method == 'GET':
-        posts = Post.query.all()
+        posts = Post.query.filter_by(user_id=current_user.id).all()
         return render_template("mypost.html",posts=posts)
+
+@app.route("/everyonepost",methods=['GET','POST'])
+@login_required
+def everyonepost():
+    if request.method == 'GET':
+        posts = Post.query.all()
+        return render_template("everyonepost.html",posts=posts)
 
 
 @app.route("/")
@@ -66,7 +76,7 @@ def newpost():
         title = request.form.get('title')
         body = request.form.get('body')
 
-        post = Post(title=title,body=body)
+        post = Post(title=title,body=body,user_id=current_user.id)
 
         db.session.add(post)
         db.session.commit()
