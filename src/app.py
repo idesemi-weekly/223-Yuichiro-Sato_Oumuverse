@@ -46,17 +46,18 @@ def load_user(user_id):
     return User.query.get(int(user_id))
     
 
-@app.route("/index",methods=['GET','POST'])
+@app.route("/mypost",methods=['GET','POST'])
 @login_required
-def index():
+def mypost():
     if request.method == 'GET':
         posts = Post.query.all()
-        return render_template("index.html",posts=posts)
-
+        return render_template("mypost.html",posts=posts)
+"""
 @app.route("/mypost")
 #@login_required
 def mypost():
     return render_template("mypost.html")
+"""
 
 @app.route("/everyonepost")
 #@login_required
@@ -75,7 +76,7 @@ def newpost():
 
         db.session.add(post)
         db.session.commit()
-        return redirect('/index')
+        return redirect('/mypost')
     else:
         return render_template("newpost.html")
 
@@ -91,7 +92,7 @@ def edit(id):
         post.body =request.form.get('body')
 
         db.session.commit()
-        return redirect('/index')
+        return redirect('/mypost')
 
 @app.route("/<int:id>/delete",methods=['GET'])
 @login_required
@@ -100,7 +101,7 @@ def delete(id):
 
     db.session.delete(post)
     db.session.commit()
-    return redirect('/index')
+    return redirect('/mypost')
 
 
 @app.route("/admin")
@@ -142,7 +143,7 @@ def login():
         user = User.query.filter_by(username=username).first()
         if user and check_password_hash(user.password,password):
             login_user(user)
-            return redirect('/index')
+            return redirect('/mypost')
         else:
             return render_template('login.html',error='UsernameまたはPasswordが正しくありません。')
     else:
