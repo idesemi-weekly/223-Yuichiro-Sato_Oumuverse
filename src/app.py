@@ -88,6 +88,13 @@ def newpost():
 @login_required
 def edit(id):
     post = Post.query.get(id)
+
+    if post is None:
+        return redirect('/mypost')
+
+    if post.user_id != current_user.id:
+        return redirect('/mypost')
+
     if request.method == "GET":
         return render_template('edit.html',post=post)
 
@@ -102,6 +109,12 @@ def edit(id):
 @login_required
 def delete(id):
     post = Post.query.get(id)
+
+    if post is None:
+        return redirect('/mypost')
+
+    if post.user_id != current_user.id:
+        return redirect('/mypost')
 
     db.session.delete(post)
     db.session.commit()
