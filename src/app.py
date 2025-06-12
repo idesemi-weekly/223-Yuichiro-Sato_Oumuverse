@@ -21,7 +21,11 @@ else:
     print("SECRET_KEY=NG")
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mypost.db'
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+db_path = os.path.join(basedir, os.pardir, 'instance', 'mypost.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 if not app.config['SECRET_KEY']:
     print('警告: SECRET_KEYが設定されていません。安全なキーを環境変数に設定してください。')
