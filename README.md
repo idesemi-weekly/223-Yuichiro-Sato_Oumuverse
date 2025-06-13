@@ -1,10 +1,12 @@
 # y177649-Dev-Portfolio
 
-Flask と SQLite を用いた、学びを投稿できる個人ポートフォリオサイトを制作中。  
-AI を使用した箇所には **`[AI-gen]`** と明記しています。
+Flask と SQLite を用いた、学びを投稿できる個人ポートフォリオサイトを制作中。<br>
+AIを使用した箇所には **`[AI-gen]`** と明記しています。
 
 ## 🤖 AI 活用について
-本プロジェクトの設計ドキュメント（`docs/` ディレクトリ内）は **ChatGPT-4.5** により生成されました。
+本プロジェクトの設計ドキュメント（`docs/` ディレクトリ内）は **ChatGPT-4.5** により生成されました。<br>
+Gemini2.5Proによって[`goal.md`](docs/goal.md),[`screens.md`](docs/screens.md),[`routes.md`](docs/routes.md)
+の3fileを更新（2025/6/13）
 
 ## 📚 ドキュメント（設計資料）
 設計に関する詳細ドキュメントは [`docs/`](docs/) ディレクトリにまとめています。
