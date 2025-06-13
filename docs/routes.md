@@ -10,5 +10,5 @@
 | `/everyonepost` | GET | 全員の投稿一覧（要ログイン） |
 | `/newpost` | GET／POST | 投稿新規作成（要ログイン） |
 | `/<id>/edit` | GET／POST | 投稿編集（要ログイン） |
-| `/<id>/delete` | GET | 投稿削除（要ログイン） |
+| `/<id>/delete` | POST | 投稿削除（要ログイン） |
 | `/admin` | GET | 管理者画面（要ログイン、機能はプレースホルダー） |
