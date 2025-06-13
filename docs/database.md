@@ -7,7 +7,7 @@ erDiagram
   User {
     INTEGER id PK
     TEXT username
-    TEXT password
+    TEXT password_hash
   }
 
   Post {
