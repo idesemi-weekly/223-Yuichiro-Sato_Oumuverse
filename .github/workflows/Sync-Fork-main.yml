@@ -31,7 +31,7 @@ jobs:
       - name: Sync fork with upstream (merge)
         run: |
           # 本家リポジトリ URL と同期対象ブランチ
-          UPSTREAM_URL="https://github.com/y177649/y177649-Dev-Portfolio"
+          UPSTREAM_URL="https://github.com/y177649/y177649-Oumuverse"
           TARGET_BRANCH="main"
 
           # upstream リモートを追加または更新
