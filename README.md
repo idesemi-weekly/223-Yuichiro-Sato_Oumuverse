@@ -1,47 +1,69 @@
-# y177649-Dev-Portfolio
+# Oumuverse
 
-Flask と SQLite を用いた、学びを投稿できる個人ポートフォリオサイトを制作中。<br>
-AIを使用した箇所には **`[AI-gen]`** と明記しています。
+> **My very first original web‑service project** — an SNS where users share *highly abstracted* images with a short title.
 
-## 🤖 AI 活用について
-本プロジェクトの設計ドキュメント（`docs/` ディレクトリ内）は **ChatGPT-4.5** により生成されました。<br>
-Gemini2.5Proによって[`goal.md`](docs/goal.md),[`screens.md`](docs/screens.md),[`routes.md`](docs/routes.md)
-の3fileを更新（2025/6/13）
+Flask と SQLite で構築中の SNS **Oumuverse** は、ユーザーが投稿した画像をサーバー側で自動的に抽象化し、視覚情報と言葉をミニマルに融合させたタイムラインを実現します。もとは「画像＋タイトル＋本文」を投稿できるポートフォリオサイトとして企画していましたが、類似サービスが多いため差別化を検討。友人とのブレインストーミングで「**画像を抽象化して“意味”より“イメージ”でつながる空間にしよう**」というアイデアが生まれ、SNS へとピボットしました。
 
-## 📚 ドキュメント（設計資料）
-設計に関する詳細ドキュメントは [`docs/`](docs/) ディレクトリにまとめています。
+---
 
-- [📌 ゴール定義 (`goal.md`)](docs/goal.md)
-- [✅ 機能リスト (`features.md`)](docs/features.md)
-- [📱 画面設計・画面遷移図 (`screens.md`)](docs/screens.md)
-- [🗃 データベース設計 (`database.md`)](docs/database.md)
-- [🛠 アーキテクチャ設計 (`architecture.md`)](docs/architecture.md)
-- [🌐 詳細設計（URL ルーティング） (`routes.md`)](docs/routes.md)
+## AI 活用について
 
-## 🛠 技術スタック
+* 設計ドキュメント（`docs/` 以下）は **ChatGPT‑4.5** でドラフト生成し、必要に応じて手動修正しています。
+* 2025‑06‑13 に **Gemini 2.5 Pro** で [`goal.md`](docs/goal.md) / [`screens.md`](docs/screens.md) / [`routes.md`](docs/routes.md) を更新しました。
+* ソース内で AI による自動生成が入った箇所には **`[AI-gen]`** と明記しています。
 
-### 🌐 Frontend
-![HTML5](https://img.shields.io/badge/-HTML5-E34F26?style=flat&logo=html5&logoColor=white)
-![Jinja2](https://img.shields.io/badge/-Jinja2-B41717?style=flat&logo=jinja&logoColor=white)
-![CSS3](https://img.shields.io/badge/-CSS3-1572B6?style=flat&logo=css3&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/-Tailwind%20CSS-06B6D4?style=flat&logo=tailwindcss&logoColor=white)
+## ドキュメント
 
-### ⚙️ Backend & Frameworks
-![Python](https://img.shields.io/badge/-Python-3776AB?style=flat&logo=python&logoColor=white)
-![Flask](https://img.shields.io/badge/-Flask-000000?style=flat&logo=flask&logoColor=white)
+設計資料は [`docs/`](docs/) ディレクトリに格納しています。
 
-### 🗄 Database
-![SQLite](https://img.shields.io/badge/-SQLite-003B57?style=flat&logo=sqlite&logoColor=white)
+| 種別         | ファイル                                      |
+| ---------- | ----------------------------------------- |
+| ゴール定義      | [`goal.md`](docs/goal.md)                 |
+| 機能リスト      | [`features.md`](docs/features.md)         |
+| 画面設計・遷移    | [`screens.md`](docs/screens.md)           |
+| データベース     | [`database.md`](docs/database.md)         |
+| アーキテクチャ    | [`architecture.md`](docs/architecture.md) |
+| URL ルーティング | [`routes.md`](docs/routes.md)             |
 
-### 🔐 Authentication
-![Flask-Login](https://img.shields.io/badge/-Flask%20Login-000?style=flat&logo=python&logoColor=white)
+## 技術スタック
 
-### 📊 Diagramming
-![Mermaid](https://img.shields.io/badge/-Mermaid-64B587?style=flat&logo=mermaid&logoColor=white)
+### Frontend
 
+![HTML5](https://img.shields.io/badge/-HTML5-E34F26?style=flat\&logo=html5\&logoColor=white) ![Jinja2](https://img.shields.io/badge/-Jinja2-B41717?style=flat\&logo=jinja\&logoColor=white) ![CSS3](https://img.shields.io/badge/-CSS3-1572B6?style=flat\&logo=css3\&logoColor=white) ![Tailwind CSS](https://img.shields.io/badge/-Tailwind%20CSS-06B6D4?style=flat\&logo=tailwindcss\&logoColor=white)
 
-## 🚀 使い方（開発環境）
-1. **リポジトリをクローン**
-   ```bash
-   git clone https://github.com/y177649/y177649-Dev-Portfolio.git
-   cd y177649-Dev-Portfolio
+### Backend & Frameworks
+
+![Python](https://img.shields.io/badge/-Python-3776AB?style=flat\&logo=python\&logoColor=white) ![Flask](https://img.shields.io/badge/-Flask-000000?style=flat\&logo=flask\&logoColor=white)
+
+### Database
+
+![SQLite](https://img.shields.io/badge/-SQLite-003B57?style=flat\&logo=sqlite\&logoColor=white)
+
+### Authentication
+
+![Flask‑Login](https://img.shields.io/badge/-Flask%20Login-000?style=flat\&logo=python\&logoColor=white)
+
+### Diagramming
+
+![Mermaid](https://img.shields.io/badge/-Mermaid-64B587?style=flat\&logo=mermaid\&logoColor=white)
+
+## ローカル開発手順
+
+```bash
+# 1) リポジトリをクローン
+git clone https://github.com/y177649/oumuverse.git
+cd oumuverse
+
+# 2) 仮想環境を作成 & 有効化
+python -m venv venv
+source venv/bin/activate  # Windows: .venv\Scripts\activate
+
+# 3) 依存パッケージをインストール
+pip install -r requirements.txt
+
+# 4) DB 初期化
+flask --app app init-db  # カスタム CLI コマンドを想定
+
+# 5) 開発サーバーを起動
+flask --app app --debug run
+```
