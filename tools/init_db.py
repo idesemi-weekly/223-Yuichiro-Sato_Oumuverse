@@ -1,5 +1,10 @@
-from app import app, db
+import os
 import sys
+
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.join(project_root, 'src'))
+
+from app import app, db
 
 try:
     with app.app_context():
@@ -8,3 +13,4 @@ try:
 except Exception as e:
     print(f"データベースの初期化に失敗しました: {e}", file=sys.stderr)
     sys.exit(1)
+
