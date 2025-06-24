@@ -2,6 +2,7 @@ from flask import Flask
 from flask import render_template , request ,redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import login_user,logout_user,login_required,LoginManager,UserMixin,current_user
+from flask_wtf.csrf import CSRFProtect
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
@@ -17,6 +18,7 @@ else:
     print("SECRET_KEY=NG")
 
 app = Flask(__name__)
+csrf = CSRFProtect(app)
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
