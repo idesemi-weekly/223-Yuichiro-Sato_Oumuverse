@@ -6,10 +6,11 @@
 
 <h1>New Post</h1>
 <form method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token()}}">
     <label for="title">Post Title</label>
     <input type="text" name="title">
     <label for="body">Body</label>
-    <input type="textarea" name="body">
+    <textarea name="body"></textarea>
     <input type="submit" value="Submit">
 </form>
 
