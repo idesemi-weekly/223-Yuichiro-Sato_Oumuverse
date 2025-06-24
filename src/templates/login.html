@@ -1,8 +1,12 @@
 {% extends "base.html"%}
+
+{% block title %}Login - Oumuverse{% endblock %}
+
 {% block content %}
 
 <h1>login</h1>
 <form method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token()}}">
     <label for="">Username</label>
     <input type="text" name="username">
     <label for="">Password</label>
@@ -12,7 +16,7 @@
 <a href="/signup" role="button">Signup</a>
 
 {% if error %}
-    <p class="error">{{ error }}</p>
+    <p style="color: red">{{ error }}</p>
 {% endif %}
     
 {% endblock %}
