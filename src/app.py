@@ -1,7 +1,3 @@
-#環境変数設定と起動コマンド
-#export FLASK_APP=app.py
-#flask run --debug
-
 from flask import Flask
 from flask import render_template , request ,redirect
 from flask_sqlalchemy import SQLAlchemy
@@ -128,7 +124,32 @@ def delete(id):
 @app.route("/admin")
 @login_required
 def admin():
-    return render_template("admin.html")
+
+    admin_user = os.environ.get('ADMIN_USERNAME')
+
+    if not admin_user or current_user.username != admin_user:
+        return redirect('/')
+
+    users = User.query.all()
+    return render_template("admin.html", users=users)
+
+@app.route('/admin/reset_password/<int:user_id>', methods=['POST'])
+@login_required
+def reset_password_admin(user_id):
+
+    admin_user = os.environ.get('ADMIN_USERNAME')
+    
+    if not admin_user or current_user.username != admin_user:
+        return redirect('/')
+
+    user_to_reset = User.query.get(user_id)
+    new_password = request.form.get('new_password')
+
+    if user_to_reset and new_password:
+        user_to_reset.password = generate_password_hash(new_password,method='pbkdf2:sha256')
+        db.session.commit()
+
+    return redirect('/admin')
 
 @app.route("/signup",methods=['GET','POST'])
 def signup():
