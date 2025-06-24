@@ -5,7 +5,6 @@
 {% block content %}
 <div class="container">
     <h1>Admin</h1>
-    <hr>
     {% for user in users %}
     <div>
         <p><strong>Username:</strong> {{ user.username }} (ID: {{ user.id }})</p>
@@ -14,8 +13,10 @@
             <input type="password" name="new_password" placeholder="New Password" required>
             <button type="submit">Reset Password</button>
         </form>
+        {% if error and error_user_id == user.id %}
+        <p style="color: red">{{ error }}</p>
+        {% endif %}
     </div>
-    <hr>
     {% endfor %}
     <a href="{{ url_for('mypost') }}">Go My Posts</a>
 </div>

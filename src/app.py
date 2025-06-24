@@ -138,12 +138,16 @@ def admin():
 def reset_password_admin(user_id):
 
     admin_user = os.environ.get('ADMIN_USERNAME')
-    
+
     if not admin_user or current_user.username != admin_user:
         return redirect('/')
 
     user_to_reset = User.query.get(user_id)
     new_password = request.form.get('new_password')
+
+    if not new_password or len(new_password) < 8:
+        users = User.query.all()
+        return render_template('admin.html',users=users,error="Passwordは8文字以上必要です",error_user_id=user_id)
 
     if user_to_reset and new_password:
         user_to_reset.password = generate_password_hash(new_password,method='pbkdf2:sha256')
