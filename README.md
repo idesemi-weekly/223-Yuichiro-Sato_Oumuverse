@@ -46,24 +46,3 @@ Flask と SQLite で構築中の SNS **Oumuverse** は、ユーザーが投稿�
 ### Diagramming
 
 ![Mermaid](https://img.shields.io/badge/-Mermaid-64B587?style=flat\&logo=mermaid\&logoColor=white)
-
-## ローカル開発手順
-
-```bash
-# 1) リポジトリをクローン
-git clone https://github.com/y177649/oumuverse.git
-cd oumuverse
-
-# 2) 仮想環境を作成 & 有効化
-python -m venv venv
-source venv/bin/activate  # Windows: .venv\Scripts\activate
-
-# 3) 依存パッケージをインストール
-pip install -r requirements.txt
-
-# 4) DB 初期化
-flask --app app init-db  # カスタム CLI コマンドを想定
-
-# 5) 開発サーバーを起動
-flask --app app --debug run
-```
