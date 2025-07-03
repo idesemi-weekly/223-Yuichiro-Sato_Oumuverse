@@ -1,0 +1,53 @@
+name: CD - Deploy to Staging & Production
+
+on:
+  push:
+    branches:
+      - staging
+
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+      - staging
+
+jobs:
+  # --- ステージング環境へのデプロイジョブ ---
+  deploy-staging:
+    name: Deploy to Staging
+    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.base_ref == 'staging'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to Staging Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          script: |
+            cd ~/apps/oumuverse-staging
+            git pull origin staging
+            source venv/bin/activate
+            pip install -r requirements.txt
+            sudo systemctl restart myflask-staging.service
+
+  # --- 本番環境へのデプロイジョブ ---
+  deploy-production:
+    name: Deploy to Production
+    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.base_ref == 'main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to Production Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          script: |
+            cd ~/apps/y177649-Dev-Portfolio
+            git pull origin main
+            source venv/bin/activate
+            pip install -r requirements.txt
+            sudo systemctl restart myflask.service
