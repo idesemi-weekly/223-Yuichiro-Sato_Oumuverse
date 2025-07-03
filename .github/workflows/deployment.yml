@@ -3,6 +3,11 @@ name: CD - Deploy to Staging & Production
 on:
   push:
     branches:
+      - staging
+
+  pull_request:
+    types: [closed]
+    branches:
       - main
       - staging
 
@@ -10,8 +15,8 @@ jobs:
   # --- ステージング環境へのデプロイジョブ ---
   deploy-staging:
     name: Deploy to Staging
+    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.base_ref == 'staging'
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/staging' # stagingブランチへのpushでのみ実行
 
     steps:
       - name: Deploy to Staging Server
@@ -30,8 +35,8 @@ jobs:
   # --- 本番環境へのデプロイジョブ ---
   deploy-production:
     name: Deploy to Production
+    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.base_ref == 'main'
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' # mainブランチへのpushでのみ実行
 
     steps:
       - name: Deploy to Production Server
