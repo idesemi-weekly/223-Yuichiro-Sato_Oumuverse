@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+from pathlib import Path
 
 import pytz
 from dotenv import load_dotenv
@@ -16,7 +17,19 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 from werkzeug.security import check_password_hash, generate_password_hash
 
-load_dotenv()
+project_root = Path(__file__).parent.parent
+
+if os.environ.get("FLASK_ENV") == "staging":
+    env_path = project_root / ".env.staging"
+else:
+    env_path = project_root / ".env"
+
+if env_path.exists():
+    load_dotenv(env_path)
+    print(f"Loaded environment from: {env_path}")
+else:
+    print(f"Warning: {env_path} not found")
+    load_dotenv()
 
 if os.environ.get("SECRET_KEY"):
     print("SECRET_KEY=OK")
@@ -28,7 +41,12 @@ csrf = CSRFProtect(app)
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-db_path = os.path.join(basedir, os.pardir, "instance", "mypost.db")
+if os.environ.get("FLASK_ENV") == "staging":
+    db_filename = "mypost-staging.db"
+else:
+    db_filename = "mypost.db"
+
+db_path = os.path.join(basedir, os.pardir, "instance", db_filename)
 app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
 if not app.config["SECRET_KEY"]:
