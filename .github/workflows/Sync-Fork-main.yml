@@ -1,0 +1,61 @@
+name: Sync Fork
+
+on:
+ schedule:
+   - cron: '0 1 * * *'  # 毎日 10:00 JST（1:00 UTC）に実行
+ workflow_dispatch:      # 手動トリガー
+
+jobs:
+ sync:
+   runs-on: ubuntu-latest
+   permissions:
+     contents: write     # fork への push を許可
+
+   steps:
+     # 1) フォークをチェックアウト（完全履歴で取得）
+     - name: Checkout fork
+       uses: actions/checkout@v4
+       with:
+         token: ${{ secrets.GITHUB_TOKEN }}
+         fetch-depth: 0  # merge に履歴が必要なのでフルクローン
+
+     # 2) bot のコミッタ情報を設定
+     - name: Configure Git
+       run: |
+         git config --global user.name 'github-actions[bot]'
+         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+     # 3) upstream と同期（.githubディレクトリを保護）
+     - name: Sync fork with upstream (protecting .github)
+       run: |
+         # 本家リポジトリ URL と同期対象ブランチ
+         UPSTREAM_URL="https://github.com/y177649/Oumuverse"
+         TARGET_BRANCH="main"
+         
+         # .githubディレクトリを完全にバックアップ
+         cp -r .github /tmp/github_backup
+         
+         # upstream を追加
+         git remote add upstream "$UPSTREAM_URL"
+         git fetch upstream
+         
+         # 現在のブランチ名を保存
+         current_branch=$(git branch --show-current)
+         
+         # upstreamの内容に完全にリセット（.githubも含む）
+         git reset --hard upstream/$TARGET_BRANCH
+         
+         # .githubディレクトリを完全に復元
+         rm -rf .github
+         cp -r /tmp/github_backup .github
+         
+         # 変更をコミット
+         git add .github
+         if git diff --staged --quiet; then
+           echo "No changes in .github directory"
+         else
+           git commit -m "Preserve fork's .github directory"
+         fi
+         
+         # フォークにプッシュ（フォーク元には影響なし）
+         git push origin $TARGET_BRANCH --force-with-lease
